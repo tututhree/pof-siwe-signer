@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SIWE Consent Sign</title>
+</head>
+<body>
+  <h3>Proof of Funds Consent</h3>
+  <button id="signBtn">Sign Consent Message</button>
+  <p id="result"></p>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <script>
+    // SIWE message for PoF consent
+    const message = `pof-group-2025.example.com wants you to sign in with your Ethereum account:
+0x68369a6Bb5c429696BF91C4Fe134C0Abc48d6bB6
+
+I consent to include my wallet in the PoF Group 2025 proof of funds aggregate for verification as of 2025-09-18 17:46 PDT.
+
+URI: mailto:223mojo@gmail.com
+Version: 1
+Chain ID: 1
+Nonce: 32891756
+Issued At: 2025-09-18T17:46:24-07:00`;
+
+    // Function to sign the message
+    async function signMessage() {
+      if (typeof window.ethereum === 'undefined') {
+        document.getElementById('result').innerHTML = 'Error: MetaMask not detected! Please install or unlock MetaMask.';
+        return;
+      }
+
+      try {
+        // Request account access
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const address = accounts[0];
+
+        // Update message with user's address
+        const finalMessage = message.replace('[Your Wallet Address]', address);
+
+        // Convert message to hex for personal_sign
+        const hexMessage = '0x' + ethers.utils.hexlify(ethers.utils.toUtf8Bytes(finalMessage)).slice(2);
+
+        // Request signature
+        const signature = await window.ethereum.request({
+          method: 'personal_sign',
+          params: [hexMessage, address],
+        });
+
+        // Display signature
+        document.getElementById('result').innerHTML = `Signature: ${signature}<br>Address: ${address}`;
+      } catch (error) {
+        document.getElementById('result').innerHTML = `Error: ${error.message}`;
+      }
+    }
+
+    // Attach click event to button
+    document.getElementById('signBtn').onclick = signMessage;
+  </script>
+</body>
+</html>
