@@ -13,47 +13,46 @@
     const message = `pof-group-2025.example.com wants you to sign in with your Ethereum account:
 0x68369a6Bb5c429696BF91C4Fe134C0Abc48d6bB6
 
-I consent to include my wallet in the PoF Group 2025 proof of funds aggregate for verification as of 2025-09-18 17:46 PDT.
+I consent to include my wallet in the PoF Group 2025 proof of funds aggregate for verification as of 2025-09-18 21:57 PDT.
 
-URI: mailto:223mojo@gmail.com
+URI: mailto:xyz123@gmail.com
 Version: 1
 Chain ID: 1
-Nonce: 32891756
-Issued At: 2025-09-18T17:46:24-07:00`;
+Nonce: t7qJ6xR3v9
+Issued At: 2025-09-18T21:57:24-07:00`;
 
     // Function to sign the message
     async function signMessage() {
-      if (typeof window.ethereum === 'undefined') {
-        document.getElementById('result').innerHTML = 'Error: MetaMask not detected! Please install or unlock MetaMask.';
+      let provider;
+      if (typeof window.ethereum !== 'undefined') {
+        provider = window.ethereum;
+      } else if (typeof window.web3 !== 'undefined') {
+        provider = window.web3.currentProvider;
+      } else {
+        document.getElementById('result').innerHTML = 'Error: MetaMask not detected! Ensure MetaMask is installed, unlocked, and enabled in Firefox.';
+        console.error('No provider found. window.ethereum:', window.ethereum, 'window.web3:', window.web3);
         return;
       }
 
       try {
-        // Request account access
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const accounts = await provider.request({ method: 'eth_requestAccounts' });
         const address = accounts[0];
-
-        // Update message with user's address
         const finalMessage = message.replace('[Your Wallet Address]', address);
-
-        // Convert message to hex for personal_sign
         const hexMessage = '0x' + ethers.utils.hexlify(ethers.utils.toUtf8Bytes(finalMessage)).slice(2);
-
-        // Request signature
-        const signature = await window.ethereum.request({
+        const signature = await provider.request({
           method: 'personal_sign',
           params: [hexMessage, address],
         });
-
-        // Display signature
         document.getElementById('result').innerHTML = `Signature: ${signature}<br>Address: ${address}`;
+        console.log('Signature successful:', signature);
       } catch (error) {
         document.getElementById('result').innerHTML = `Error: ${error.message}`;
+        console.error('Signing error:', error);
       }
     }
 
-    // Attach click event to button
     document.getElementById('signBtn').onclick = signMessage;
+    console.log('Provider check - window.ethereum:', window.ethereum, 'window.web3:', window.web3');
   </script>
 </body>
 </html>
