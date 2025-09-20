@@ -2,6 +2,5 @@
   "rewrites": [
     { "source": "/admin", "destination": "/admin.html" },
     { "source": "/", "destination": "/index.html" }
-  ],
-  "rootDirectory": "vercel2"
+  ]
 }

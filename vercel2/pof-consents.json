@@ -1,9 +1,0 @@
-[
-  {
-    "address": "0xcb8a8df0cf4e729ef39b16bc7a147997b856f4e1",
-    "chain": "ethereum",
-    "message": "PoF-Group-2025 wants you to sign in with your Ethereum account:\n0xcb8a8df0cf4e729ef39b16bc7a147997b856f4e1\nI consent to include my wallet address in the PoF Group 2025 bundle for aggregate proof of funds verification as of 2025-09-18.\nBundle ID: pof-group-2025-v1\nChain: 1\nVersion: 1\nIssued At: 2025-09-19T18:05:58.082Z",
-    "signature": "0x3d135ab677aca1ce7f8fa0b806bd13b63481b835833f215d6a60ba7c8ac32d8b1b4c479eb009de2c812bf2d6c8fd194802278b6f7d6dec2e17eb6a924f1a6e2a1b",
-    "bundleId": "pof-group-2025-v1"
-  }
-]

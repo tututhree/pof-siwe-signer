@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PoF Admin</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Ethers.js -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <!-- TweetNaCl -->
+  <script src="https://cdn.jsdelivr.net/npm/tweetnacl@1.0.3/nacl.min.js"></script>
+
+  <!-- BS58 Implementation (same as in working index.html) -->
+  <script>
+    // BS58 implementation for Bitcoin/IPFS encoding
+    (function(global) {
+      const ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+      const ALPHABET_MAP = {};
+      const BASE = 58;
+
+      for (let i = 0; i < ALPHABET.length; i++) {
+        ALPHABET_MAP[ALPHABET.charAt(i)] = i;
+      }
+
+      global.bs58 = {
+        encode: function(buffer) {
+          if (!buffer || buffer.length === 0) return '';
+
+          const digits = [0];
+          for (let i = 0; i < buffer.length; i++) {
+            let carry = buffer[i];
+            for (let j = 0; j < digits.length; ++j) {
+              carry += digits[j] << 8;
+              digits[j] = carry % BASE;
+              carry = (carry / BASE) | 0;
+            }
+            while (carry > 0) {
+              digits.push(carry % BASE);
+              carry = (carry / BASE) | 0;
+            }
+          }
+
+          let string = '';
+          for (let i = 0; buffer[i] === 0 && i < buffer.length - 1; i++) {
+            string += ALPHABET[0];
+          }
+          for (let i = digits.length - 1; i >= 0; i--) {
+            string += ALPHABET[digits[i]];
+          }
+
+          return string;
+        },
+
+        decode: function(string) {
+          if (!string || string.length === 0) return new Uint8Array(0);
+
+          const bytes = [0];
+          for (let i = 0; i < string.length; i++) {
+            const value = ALPHABET_MAP[string[i]];
+            if (value === undefined) throw new Error('Invalid character');
+
+            let carry = value;
+            for (let j = 0; j < bytes.length; ++j) {
+              carry += bytes[j] * BASE;
+              bytes[j] = carry & 0xff;
+              carry >>= 8;
+            }
+            while (carry > 0) {
+              bytes.push(carry & 0xff);
+              carry >>= 8;
+            }
+          }
+
+          for (let i = 0; string[i] === ALPHABET[0] && i < string.length - 1; i++) {
+            bytes.push(0);
+          }
+
+          return new Uint8Array(bytes.reverse());
+        }
+      };
+    })(window);
+  </script>
+</head>
+<body>
+  <div class="container">
+    <div class="section">
+      <h3>Build PoF Consents</h3>
+
+      <div id="entries">
+        <div class="entry">
+          <label for="success0">Success Output:</label>
+          <textarea id="success0" rows="8" placeholder="Paste full 'Success' output from index.html"></textarea>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <label for="jsonAction">Consent Action:</label>
+        <select id="jsonAction">
+          <option value="add">Add to existing consents below</option>
+          <option value="replace">Replace existing consents below</option>
+        </select>
+      </div>
+
+      <div class="button-row">
+        <button id="generateJsonBtn">Generate Consent(s)</button>
+        <button id="addEntryBtn">Add Another Participant</button>
+      </div>
+
+      <div id="result"></div>
+    </div>
+
+    <div class="section">
+      <h3>Verify PoF Consents</h3>
+
+      <label for="jsonFile">Upload Consents File:</label>
+      <input type="file" id="jsonFile" accept=".json">
+
+      <label for="consentsJson">Consents JSON:</label>
+      <textarea id="consentsJson" rows="8" placeholder="Paste or upload JSON with consents"></textarea>
+
+      <div class="button-row">
+        <button id="verifyBtn">Verify All</button>
+      </div>
+
+      <div id="verifyResult"></div>
+
+      <div id="addToBundleSection">
+        <h4>Valid Addresses for DeBank Bundle</h4>
+        <p>Copy these verified addresses and add them to your DeBank bundle:</p>
+        <textarea id="validAddresses" rows="4" readonly></textarea>
+
+        <div class="button-row">
+          <button id="copyAddressesBtn">Copy All Addresses</button>
+          <button id="openDeBankBtn">Open DeBank Bundles</button>
+          <button id="openPortfolioBtn">Open Bundle Portfolio</button>
+          <input id="bundleIdInput" type="text" placeholder="Enter Bundle ID">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+</html>

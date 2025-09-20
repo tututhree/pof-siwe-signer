@@ -1,7 +1,10 @@
-// Builder Functionality
 let entryCount = 1;
 
 document.getElementById('addEntryBtn').onclick = () => {
+  if (typeof ethers === 'undefined' || typeof bs58 === 'undefined' || typeof nacl === 'undefined') {
+    alert('Error: Required libraries (ethers, bs58, or nacl) failed to load.');
+    return;
+  }
   const entries = document.getElementById('entries');
   const newEntry = document.createElement('div');
   newEntry.className = 'entry';
@@ -15,6 +18,10 @@ document.getElementById('addEntryBtn').onclick = () => {
 };
 
 function isValidAddress(address, chain) {
+  if (typeof ethers === 'undefined' || typeof bs58 === 'undefined') {
+    alert('Error: Required libraries (ethers or bs58) failed to load.');
+    return false;
+  }
   if (chain === 'ethereum') {
     return ethers.utils.isAddress(address);
   } else if (chain === 'solana') {
@@ -64,6 +71,10 @@ function parseSuccessMessage(successText) {
 }
 
 document.getElementById('generateJsonBtn').onclick = () => {
+  if (typeof ethers === 'undefined' || typeof bs58 === 'undefined') {
+    alert('Error: Required libraries (ethers or bs58) failed to load.');
+    return;
+  }
   const consents = [];
   const result = document.getElementById('result');
   result.className = '';
@@ -147,7 +158,6 @@ document.getElementById('generateJsonBtn').onclick = () => {
   }
 };
 
-// Verifier Functionality
 document.getElementById('jsonFile').addEventListener('change', (event) => {
   const file = event.target.files[0];
   if (file) {
@@ -160,6 +170,10 @@ document.getElementById('jsonFile').addEventListener('change', (event) => {
 });
 
 async function verify() {
+  if (typeof ethers === 'undefined' || typeof bs58 === 'undefined' || typeof nacl === 'undefined') {
+    alert('Error: Required libraries (ethers, bs58, or nacl) failed to load.');
+    return;
+  }
   const jsonStr = document.getElementById('consentsJson').value;
   const verifyResultEl = document.getElementById('verifyResult');
   verifyResultEl.className = '';

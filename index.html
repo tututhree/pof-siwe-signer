@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>PoF Consent Sign</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Ethers.js -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <!-- TweetNaCl -->
+  <script src="https://cdn.jsdelivr.net/npm/tweetnacl@1.0.3/nacl.min.js"></script>
+
+  <!-- BS58 Implementation (since CDN versions don't export globally) -->
+  <script>
+    // BS58 implementation for Bitcoin/IPFS encoding
+    (function(global) {
+      const ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+      const ALPHABET_MAP = {};
+      const BASE = 58;
+
+      for (let i = 0; i < ALPHABET.length; i++) {
+        ALPHABET_MAP[ALPHABET.charAt(i)] = i;
+      }
+
+      global.bs58 = {
+        encode: function(buffer) {
+          if (!buffer || buffer.length === 0) return '';
+
+          const digits = [0];
+          for (let i = 0; i < buffer.length; i++) {
+            let carry = buffer[i];
+            for (let j = 0; j < digits.length; ++j) {
+              carry += digits[j] << 8;
+              digits[j] = carry % BASE;
+              carry = (carry / BASE) | 0;
+            }
+            while (carry > 0) {
+              digits.push(carry % BASE);
+              carry = (carry / BASE) | 0;
+            }
+          }
+
+          let string = '';
+          for (let i = 0; buffer[i] === 0 && i < buffer.length - 1; i++) {
+            string += ALPHABET[0];
+          }
+          for (let i = digits.length - 1; i >= 0; i--) {
+            string += ALPHABET[digits[i]];
+          }
+
+          return string;
+        },
+
+        decode: function(string) {
+          if (!string || string.length === 0) return new Uint8Array(0);
+
+          const bytes = [0];
+          for (let i = 0; i < string.length; i++) {
+            const value = ALPHABET_MAP[string[i]];
+            if (value === undefined) throw new Error('Invalid character');
+
+            let carry = value;
+            for (let j = 0; j < bytes.length; ++j) {
+              carry += bytes[j] * BASE;
+              bytes[j] = carry & 0xff;
+              carry >>= 8;
+            }
+            while (carry > 0) {
+              bytes.push(carry & 0xff);
+              carry >>= 8;
+            }
+          }
+
+          for (let i = 0; string[i] === ALPHABET[0] && i < string.length - 1; i++) {
+            bytes.push(0);
+          }
+
+          return new Uint8Array(bytes.reverse());
+        }
+      };
+    })(window);
+  </script>
+</head>
+<body>
+  <div class="container">
+    <div class="section">
+      <h3>Proof of Funds Consent</h3>
+      <label for="address">Wallet Address:</label>
+      <input type="text" id="address" placeholder="Enter your address (ETH or SOL)" required>
+      <label for="chain">Chain:</label>
+      <select id="chain">
+        <option value="ethereum">Ethereum</option>
+        <option value="solana">Solana</option>
+      </select>
+      <button id="signBtn">Sign Consent Message</button>
+      <div id="result"></div>
+    </div>
+  </div>
+  <script src="signer.js"></script>
+</body>
+</html>
