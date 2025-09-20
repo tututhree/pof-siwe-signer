@@ -1,10 +1,20 @@
-const messageTemplate = (address, chain) => `PoF-Group-2025 wants you to sign in with your ${chain.charAt(0).toUpperCase() + chain.slice(1)} account:
+// Add library checks to ensure dependencies are loaded
+if (typeof ethers === 'undefined' || typeof bs58 === 'undefined' || typeof nacl === 'undefined') {
+  alert('Error: Required libraries (ethers, bs58, or nacl) failed to load. Please check your internet connection or CDN availability.');
+  throw new Error('Missing JavaScript libraries');
+}
+
+const messageTemplate = (address, chain) => {
+  const now = new Date();
+  const formattedDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}T${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}Z`;
+  return `PoF-Group-2025 wants you to sign in with your ${chain.charAt(0).toUpperCase() + chain.slice(1)} account:
 ${address}
 I consent to include my wallet address in the PoF Group 2025 bundle for aggregate proof of funds verification as of 2025-09-18.
 Bundle ID: pof-group-2025-v1
 Chain: ${chain === 'ethereum' ? '1' : 'solana'}
 Version: 1
-Issued At: ${new Date().toISOString()}`;
+Issued At: ${formattedDate}`;
+};
 
 const confirmationMessage = "I confirm that I want to proceed with signing the Proof of Funds consent message.";
 
