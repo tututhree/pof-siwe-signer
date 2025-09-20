@@ -3,62 +3,72 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PoF Consents Builder and Verifier</title>
-  <link rel="stylesheet" href="/public/style.css">
+  <title>PoF Admin</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Ethereum library -->
+  <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
+  <!-- Solana libraries -->
+  <script src="https://unpkg.com/bs58@5.0.0/dist/index.min.js"></script>
+  <script src="https://unpkg.com/tweetnacl@1.0.3/nacl.min.js"></script>
 </head>
 <body>
-<div class="container">
-  <!-- Builder Section -->
-  <div class="section">
-    <h3>Build PoF Consents</h3>
-    <div id="entries">
-      <div class="entry">
-        <label for="success0">Success Output:</label>
-        <textarea id="success0" rows="8" placeholder="Paste full 'Success' output from signing page"></textarea>
+  <div class="container">
+    <div class="section">
+      <h3>Build PoF Consents</h3>
+
+      <div id="entries">
+        <div class="entry">
+          <label for="success0">Success Output:</label>
+          <textarea id="success0" rows="8" placeholder="Paste full 'Success' output from siwe-sign.html"></textarea>
+        </div>
       </div>
-    </div>
-    <div class="action-row">
-      <div>
+
+      <div class="action-row">
         <label for="jsonAction">Consent Action:</label>
         <select id="jsonAction">
           <option value="add">Add to existing consents below</option>
           <option value="replace">Replace existing consents below</option>
         </select>
       </div>
-      <button id="generateJsonBtn">Generate Consent(s)</button>
-    </div>
-    <div class="button-row">
-      <button id="addEntryBtn">Add Another Participant</button>
-    </div>
-    <div id="result"></div>
-  </div>
 
-  <!-- Verifier Section -->
-  <div class="section">
-    <h3>Verify PoF Consents</h3>
-    <label for="jsonFile">Upload Consents File:</label>
-    <input type="file" id="jsonFile" accept=".json">
-    <label for="consentsJson">Consents JSON:</label>
-    <textarea id="consentsJson" placeholder="Paste consents JSON here, upload a file, or generate from above" rows="10"></textarea>
-    <button id="verifyBtn">Verify All</button>
-    <div id="verifyResult"></div>
-    <div id="addToBundleSection">
-      <h4>Valid Addresses for DeBank Bundle</h4>
-      <p>Copy these verified addresses and add them to your DeBank bundle:</p>
-      <textarea id="validAddresses" readonly rows="3" placeholder="No valid addresses yet"></textarea>
       <div class="button-row">
-        <button id="copyAddressesBtn">Copy All Addresses</button>
-        <button id="openDeBankBtn">Open DeBank Bundles</button>
-        <input type="text" id="bundleIdInput" placeholder="Enter your Bundle ID (optional)">
-        <button id="openPortfolioBtn">Open Bundle Portfolio</button>
+        <button id="generateJsonBtn">Generate Consent(s)</button>
+        <button id="addEntryBtn">Add Another Participant</button>
+      </div>
+
+      <div id="result"></div>
+    </div>
+
+    <div class="section">
+      <h3>Verify PoF Consents</h3>
+
+      <label for="jsonFile">Upload Consents File:</label>
+      <input type="file" id="jsonFile" accept=".json">
+
+      <label for="consentsJson">Consents JSON:</label>
+      <textarea id="consentsJson" rows="8" placeholder="Paste or upload JSON with consents"></textarea>
+
+      <div class="button-row">
+        <button id="verifyBtn">Verify All</button>
+      </div>
+
+      <div id="verifyResult"></div>
+
+      <div id="addToBundleSection">
+        <h4>Valid Addresses for DeBank Bundle</h4>
+        <p>Copy these verified addresses and add them to your DeBank bundle:</p>
+        <textarea id="validAddresses" rows="4" readonly></textarea>
+
+        <div class="button-row">
+          <button id="copyAddressesBtn">Copy All Addresses</button>
+          <button id="openDeBankBtn">Open DeBank Bundles</button>
+          <button id="openPortfolioBtn">Open Bundle Portfolio</button>
+          <input id="bundleIdInput" type="text" placeholder="Enter Bundle ID">
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bs58@4.0.1/dist/index.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/tweetnacl@1.0.3/nacl.min.js"></script>
-  <script src="/public/admin.js"></script>
+  <script src="admin.js"></script>
 </body>
 </html>
